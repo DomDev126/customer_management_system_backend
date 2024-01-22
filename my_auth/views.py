@@ -121,7 +121,7 @@ class UserDetailForAdminView(APIView):
   permission_classes = [IsSuperUser]
 
   def get(self, request):
-    user_id = request.data.get('user_id')
+    user_id = request.query_params.get('user_id')
     if not user_id:
       return Response({
         'user_id': 'This field is required'
