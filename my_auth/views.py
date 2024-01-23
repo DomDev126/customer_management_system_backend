@@ -140,3 +140,28 @@ class UserDetailForAdminView(APIView):
       'user': UserSerializer(user).data,
       'jobs': JobSerializer(jobs, many=True).data
     })
+  
+class UserInformationUpdateView(APIView):
+  permission_classes = [IsAuthenticated]
+  def post(self, request):
+    user_id = request.data.get('user_id')
+    if not user_id:
+      return Response({
+        'user_id': 'This field is required'
+      }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+      user = UserData.objects.get(pk = user_id)
+    except UserData.DoesNotExist:
+      return Response({
+        'error': 'User not exist'
+      }, status=status.HTTP_400_BAD_REQUEST)
+
+    serializer = ProfileSerializer(instance=user, data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    
+    return Response({
+      'user_id': request.user.id,
+      'profiile': True
+    })
