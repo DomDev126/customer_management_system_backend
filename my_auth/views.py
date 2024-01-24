@@ -4,7 +4,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import UserSerializer, ProfileSerializer
+from .serializers import UserSerializer, ProfileSerializer, RegisterSerializer
 from .models import UserData
 from dotenv import load_dotenv
 from .utils import IsSuperUser
@@ -15,7 +15,7 @@ load_dotenv()
 
 class RegisterView(APIView):
   def post(self, request):
-    serializer = UserSerializer(data=request.data)
+    serializer = RegisterSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
     duplicatedUser = UserData.objects.filter(email = serializer.validated_data['email'])
@@ -34,6 +34,7 @@ class RegisterView(APIView):
       return Response({
         'user_id': serializer.data['id'],
         'email': serializer.data['email'],
+        'tel': serializer.data['tel'],
         'access_token': access_token,
         'refresh_token': refresh_token,
       })
@@ -142,7 +143,7 @@ class UserDetailForAdminView(APIView):
     })
   
 class UserInformationUpdateView(APIView):
-  permission_classes = [IsAuthenticated]
+  permission_classes = [IsSuperUser]
   def post(self, request):
     user_id = request.data.get('user_id')
     if not user_id:

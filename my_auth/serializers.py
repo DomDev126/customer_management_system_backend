@@ -32,3 +32,12 @@ class ProfileSerializer(serializers.ModelSerializer):
       'tel',
       'address',
     ]
+
+class RegisterSerializer(serializers.ModelSerializer):
+  email = serializers.EmailField(required=True)
+  tel = serializers.CharField(required=True)
+  password = serializers.CharField(required=True)
+
+  class Meta:
+    model = UserData
+    fields = '__all__'
