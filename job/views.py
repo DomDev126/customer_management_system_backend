@@ -61,5 +61,5 @@ class JobDetailView(APIView):
         'job_id': 'Not Found'
       }, status=status.HTTP_400_BAD_REQUEST)
     
-    return Response(JobSerializer(job).data)
+    return Response(JobSerializer(job, context={"request":request}).data)
 
